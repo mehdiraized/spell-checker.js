@@ -1,44 +1,45 @@
-var path   = require('path')
-var expect = require('chai').expect
-var spell  = require('../dist/')
+var path = require("path");
+var expect = require("chai").expect;
+var spell = require("../dist/");
 
 /** English dictionary */
-describe('English dictionary', () => {
-    var spellchecking = index => it(`Spell checking #${index}`, () => {
-        expect(spell.check('London')).to.have.length(0)
-        expect(spell.check('is')).to.have.length(0)
-        expect(spell.check('the')).to.have.length(0)
-        expect(spell.check('capital')).to.have.length(0)
-        expect(spell.check('of Great Britain')).to.have.length(0)
+describe("English dictionary", () => {
+  var spellchecking = index =>
+    it(`Spell checking #${index}`, () => {
+      expect(spell.check("London")).to.have.length(0);
+      expect(spell.check("is")).to.have.length(0);
+      expect(spell.check("the")).to.have.length(0);
+      expect(spell.check("capital")).to.have.length(0);
+      expect(spell.check("of Great Britain")).to.have.length(0);
 
-        expect(spell.check('Blahblahblah')).to.have.length(1)
-        expect(spell.check('Blahblahblah blahblah')).to.have.length(2)
-        expect(spell.check('Hello')).to.have.length(0)
-        expect(spell.check('Привет всем')).to.have.length(2)
-    })
+      expect(spell.check("Blahblahblah")).to.have.length(1);
+      expect(spell.check("Blahblahblah blahblah")).to.have.length(2);
+      expect(spell.check("Hello")).to.have.length(0);
+      expect(spell.check("Привет всем")).to.have.length(2);
+    });
 
-    it('Load dictionary', () => {
-        spell.clear()
-        spell.load('en')
-    })
+  it("Load dictionary", () => {
+    spell.clear();
+    spell.load("en");
+  });
 
-    spellchecking(1)
+  spellchecking(1);
 
-    it('Aynsc load dictionary', done => {
-        spell.clear()
+  it("Aynsc load dictionary", done => {
+    spell.clear();
 
-        spell.load({ input: 'en', async: true }).then(res => {
-            if (res) {
-                done()
-            }
-        }, done)
-    })
+    spell.load({ input: "en", async: true }).then(res => {
+      if (res) {
+        done();
+      }
+    }, done);
+  });
 
-    spellchecking(2)
+  spellchecking(2);
 
-    it('Spell checking long', () => {
-        const check = spell.check(
-            `Comfort reached gay perhaps chamber his six detract besides
+  it("Spell checking long", () => {
+    const check = spell.check(
+      `Comfort reached gay perhaps chamber his six detract besides
             add. Moonlight newspaper up he it enjoyment agreeable
             depending. Timed voice share led his widen noisy young. On
             weddings believed laughing although material do exercise of.
@@ -61,47 +62,48 @@ describe('English dictionary', () => {
             continued concealed as knowledge happiness. Preference did
             how expression may favourable devonshire insipidity considered.
             An length design regret an hardly barton mr figure. `
-        )
+    );
 
-        expect(check).to.have.length(1)
-    })
-})
+    expect(check).to.have.length(1);
+  });
+});
 
 /** Russian dictionary */
-describe('Russian dictionary', () => {
-    const spellchecking = index => it(`Spell checking #${index}`, () => {
-        expect(spell.check('Приступая')).to.have.length(0)
-        expect(spell.check('к доказательству')).to.have.length(0)
-        expect(spell.check('следует')).to.have.length(0)
-        expect(spell.check('заявить')).to.have.length(0)
-        expect(spell.check('что лемма неоднозначна')).to.have.length(0)
+describe("Russian dictionary", () => {
+  const spellchecking = index =>
+    it(`Spell checking #${index}`, () => {
+      expect(spell.check("Приступая")).to.have.length(0);
+      expect(spell.check("к доказательству")).to.have.length(0);
+      expect(spell.check("следует")).to.have.length(0);
+      expect(spell.check("заявить")).to.have.length(0);
+      expect(spell.check("что лемма неоднозначна")).to.have.length(0);
 
-        expect(spell.check('Блаблабла')).to.have.length(1)
-        expect(spell.check('Blahblahblah blahblah')).to.have.length(2)
-        expect(spell.check('Привет всем')).to.have.length(0)
-        expect(spell.check('Hello')).to.have.length(1)
-    })
+      expect(spell.check("Блаблабла")).to.have.length(1);
+      expect(spell.check("Blahblahblah blahblah")).to.have.length(2);
+      expect(spell.check("Привет всем")).to.have.length(0);
+      expect(spell.check("Hello")).to.have.length(1);
+    });
 
-    it('Load dictionary', () => {
-        spell.clear()
-        spell.load('ru')
-    })
+  it("Load dictionary", () => {
+    spell.clear();
+    spell.load("ru");
+  });
 
-    spellchecking(1)
+  spellchecking(1);
 
-    it('Aynsc load dictionary', done => {
-        spell.clear()
+  it("Aynsc load dictionary", done => {
+    spell.clear();
 
-        spell.load({ input: 'ru', async: true }).then(res => {
-            if(res) done()
-        }, done)
-    })
+    spell.load({ input: "ru", async: true }).then(res => {
+      if (res) done();
+    }, done);
+  });
 
-    spellchecking(2)
+  spellchecking(2);
 
-    it('Spell checking long', () => {
-        const check = spell.check(
-            `Генеративная поэтика, на первый взгляд, нивелирует музыкальный
+  it("Spell checking long", () => {
+    const check = spell.check(
+      `Генеративная поэтика, на первый взгляд, нивелирует музыкальный
             цикл, потому что в стихах и в прозе автор рассказывает нам об
             одном и том же. Эстетическое воздействие текстологически
             приводит культурный речевой акт и передается в этом
@@ -122,112 +124,158 @@ describe('Russian dictionary', () => {
             что самого Бахтина удивила эта всеобщая порабощенность тайной
             "чужого" слова, тем не менее контрапункт редуцирует метаязык,
             и это придает ему свое звучание, свой характер.`
-        )
+    );
 
-        expect(check).to.have.length(3)
-    })
-})
+    expect(check).to.have.length(3);
+  });
+});
+
+/** Persian dictionary */
+describe("Persian dictionary", () => {
+  var spellchecking = index =>
+    it(`Spell checking #${index}`, () => {
+      expect(spell.check("تهران")).to.have.length(0);
+      expect(spell.check("هست")).to.have.length(0);
+      expect(spell.check("اره")).to.have.length(0);
+      expect(spell.check("مشکل")).to.have.length(0);
+      expect(spell.check("از بریتانیا")).to.have.length(0);
+
+      expect(spell.check("خرررر")).to.have.length(1);
+      expect(spell.check("بلابابا سلام وحیید اپیسوم سسسسسد")).to.have.length(1);
+      expect(spell.check("سلام")).to.have.length(0);
+      expect(spell.check("تسسست خططا")).to.have.length(2);
+    });
+
+  it("Load dictionary", () => {
+    spell.clear();
+    spell.load("fa");
+  });
+
+  spellchecking(1);
+
+  it("Aynsc load dictionary", done => {
+    spell.clear();
+
+    spell.load({ input: "fa", async: true }).then(res => {
+      if (res) {
+        done();
+      }
+    }, done);
+  });
+
+  spellchecking(2);
+
+  it("Spell checking long", () => {
+    const check = spell.check(
+      `لورم ایپسوم متن ساختگی با تولید سادگی نامفهوم از صنعت چاپ، و با استفاده از طراحان گرافیک است، چاپگرها و متون بلکه روزنامه و مجله در ستون و سطرآنچنان که لازم است، و برای شرایط فعلی تکنولوژی مورد نیاز، و کاربردهای متنوع با هدف بهبود ابزارهای کاربردی می باشد، کتابهای زیادی در شصت و سه درصد گذشته حال و آینده، شناخت فراوان جامعه و متخصصان را می طلبد، تا با نرم افزارها شناخت بیشتری را برای طراحان رایانه ای علی الخصوص طراحان خلاقی، و فرهنگ پیشرو در زبان فارسی ایجاد کرد، در این صورت می توان امید داشت که تمام و دشواری موجود در ارائه راهکارها، و شرایط سخت تایپ به پایان رسد و زمان مورد نیاز شامل حروفچینی دستاوردهای اصلی، و جوابگوی سوالات پیوسته اهل دنیای موجود طراحی اساسا مورد استفاده قرار گیرد. `
+    );
+
+    expect(check).to.have.length(16);
+  });
+});
 
 /** Russian surnames dictionary */
-describe('Russian surnames dictionary', () => {
-    const spellchecking = index => it(`Spell checking #${index}`, () => {
-        expect(spell.check('Иванов')).to.have.length(0)
-        expect(spell.check('Петров')).to.have.length(0)
-        expect(spell.check('Сидоров')).to.have.length(0)
+describe("Russian surnames dictionary", () => {
+  const spellchecking = index =>
+    it(`Spell checking #${index}`, () => {
+      expect(spell.check("Иванов")).to.have.length(0);
+      expect(spell.check("Петров")).to.have.length(0);
+      expect(spell.check("Сидоров")).to.have.length(0);
 
-        expect(spell.check('Блаблабла')).to.have.length(1)
-        expect(spell.check('не фамилия')).to.have.length(2)
-    })
+      expect(spell.check("Блаблабла")).to.have.length(1);
+      expect(spell.check("не фамилия")).to.have.length(2);
+    });
 
-    it('Load dictionary', () => {
-        spell.clear()
-        spell.load('ru_surnames')
-    })
+  it("Load dictionary", () => {
+    spell.clear();
+    spell.load("ru_surnames");
+  });
 
-    spellchecking(1)
+  spellchecking(1);
 
-    it('Aynsc load dictionary', done => {
-        spell.clear()
+  it("Aynsc load dictionary", done => {
+    spell.clear();
 
-        spell.load({ input: 'ru_surnames', async: true }).then(res => {
-            if (res) {
-                done()
-            }
-        }, done)
-    })
+    spell.load({ input: "ru_surnames", async: true }).then(res => {
+      if (res) {
+        done();
+      }
+    }, done);
+  });
 
-    spellchecking(2)
-})
+  spellchecking(2);
+});
 
 /** Custom dictionary */
-describe('Custom dictionary', () => {
-    const spellchecking = index => it(`Spell checking #${index}`, () => {
-        expect(spell.check('Γεια')).to.have.length(0)
-        expect(spell.check('καλός')).to.have.length(0)
+describe("Custom dictionary", () => {
+  const spellchecking = index =>
+    it(`Spell checking #${index}`, () => {
+      expect(spell.check("Γεια")).to.have.length(0);
+      expect(spell.check("καλός")).to.have.length(0);
 
-        expect(spell.check('γαμημένος')).to.have.length(1)
-    })
+      expect(spell.check("γαμημένος")).to.have.length(1);
+    });
 
-    it('Load dictionary', () => {
-        spell.clear()
-        spell.load('./test/test_dict.txt')
-    })
+  it("Load dictionary", () => {
+    spell.clear();
+    spell.load("./test/test_dict.txt");
+  });
 
-    spellchecking(1)
+  spellchecking(1);
 
-    it('Aynsc load dictionary', done => {
-        spell.clear()
+  it("Aynsc load dictionary", done => {
+    spell.clear();
 
-        spell.load({ input: './test/test_dict.txt', async: true }).then(res => {
-            if(res) done()
-        }, done)
-    })
+    spell.load({ input: "./test/test_dict.txt", async: true }).then(res => {
+      if (res) done();
+    }, done);
+  });
 
-    spellchecking(2)
+  spellchecking(2);
 });
 
 // Compare dictionaries
-describe('Combined English and custom dictionaries', () => {
-    const spellchecking = index => it(`Spell checking #${index}`, () => {
-        expect(spell.check('London')).to.have.length(0)
-        expect(spell.check('is')).to.have.length(0)
-        expect(spell.check('the')).to.have.length(0)
-        expect(spell.check('capital')).to.have.length(0)
-        expect(spell.check('of Great Britain')).to.have.length(0)
-        expect(spell.check('Γεια')).to.have.length(0)
-        expect(spell.check('καλός')).to.have.length(0)
+describe("Combined English and custom dictionaries", () => {
+  const spellchecking = index =>
+    it(`Spell checking #${index}`, () => {
+      expect(spell.check("London")).to.have.length(0);
+      expect(spell.check("is")).to.have.length(0);
+      expect(spell.check("the")).to.have.length(0);
+      expect(spell.check("capital")).to.have.length(0);
+      expect(spell.check("of Great Britain")).to.have.length(0);
+      expect(spell.check("Γεια")).to.have.length(0);
+      expect(spell.check("καλός")).to.have.length(0);
 
-        expect(spell.check('Блаблабла')).to.have.length(1)
-        expect(spell.check('Blahblahblah blahblah')).to.have.length(2)
-        expect(spell.check('γαμημένος')).to.have.length(1)
+      expect(spell.check("Блаблабла")).to.have.length(1);
+      expect(spell.check("Blahblahblah blahblah")).to.have.length(2);
+      expect(spell.check("γαμημένος")).to.have.length(1);
+    });
 
-    })
+  it("Load dictionaries", () => {
+    spell.clear();
+    spell.load("en");
+    spell.load("./test/test_dict.txt");
+  });
 
-    it('Load dictionaries', () => {
-        spell.clear()
-        spell.load('en')
-        spell.load('./test/test_dict.txt')
-    })
+  spellchecking(1);
 
-    spellchecking(1)
+  it("Aynsc load dictionaries", done => {
+    spell.clear();
 
-    it('Aynsc load dictionaries', done => {
-        spell.clear()
+    Promise.all([
+      spell.load({ input: "en", async: true }),
+      spell.load({ input: "./test/test_dict.txt", async: true })
+    ]).then(resArr => {
+      for (var res of resArr) {
+        if (!res) {
+          done("Error");
+          return;
+        }
+      }
 
-        Promise.all([
-            spell.load({ input: 'en', async: true }),
-            spell.load({ input: './test/test_dict.txt', async: true })
-        ]).then(resArr => {
-            for (var res of resArr) {
-                if(!res) {
-                    done('Error')
-                    return
-                }
-            }
+      done();
+    }, done);
+  });
 
-            done()
-        }, done)
-    })
-
-    spellchecking(2)
+  spellchecking(2);
 });

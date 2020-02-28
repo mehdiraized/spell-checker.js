@@ -1,9 +1,10 @@
 "use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
@@ -43,21 +44,25 @@ var SpellChecker = (function () {
     function SpellChecker() {
         this.BUFFER = {
             WORDS: new Set(),
-            SIZE: 0,
+            SIZE: 0
         };
         this.dictionaries = {
             ru: {
-                src: path_1.resolve(__dirname, '../dictionaries/ru/russian.txt'),
-                charset: 'windows-1251'
+                src: path_1.resolve(__dirname, "../dictionaries/ru/russian.txt"),
+                charset: "windows-1251"
             },
             ru_surnames: {
-                src: path_1.resolve(__dirname, '../dictionaries/ru/russian_surnames.txt'),
-                charset: 'windows-1251'
+                src: path_1.resolve(__dirname, "../dictionaries/ru/russian_surnames.txt"),
+                charset: "windows-1251"
             },
             en: {
-                src: path_1.resolve(__dirname, '../dictionaries/en/english.txt'),
-                charset: 'windows-1252'
+                src: path_1.resolve(__dirname, "../dictionaries/en/english.txt"),
+                charset: "windows-1252"
             },
+            fa: {
+                src: path_1.resolve(__dirname, "../dictionaries/fa/farsi.txt"),
+                charset: "utf8"
+            }
         };
     }
     SpellChecker.prototype.load = function (inputOrProps, charsetOption) {
@@ -70,7 +75,7 @@ var SpellChecker = (function () {
             return dictionary.size;
         }
         else {
-            var dictPromise_1 = this.readDictionaryAsync(options.input, options.charset || 'utf8', this.BUFFER.WORDS);
+            var dictPromise_1 = this.readDictionaryAsync(options.input, options.charset || "utf8", this.BUFFER.WORDS);
             return new Promise(function (resolve) {
                 dictPromise_1.then(function (resp) {
                     _this.BUFFER.WORDS = resp.words;
@@ -86,20 +91,18 @@ var SpellChecker = (function () {
     };
     SpellChecker.prototype.check = function (text) {
         if (this.BUFFER.SIZE === 0) {
-            console.error('ERROR! Dictionaries are not loaded');
+            console.error("ERROR! Dictionaries are not loaded");
             return;
         }
-        var regex = XRegExp('[^\\p{N}\\p{L}-_]', 'g');
+        var regex = XRegExp("[^\\p{N}\\p{L}-_]", "g");
         var textArr = text
-            .replace(regex, ' ')
-            .split(' ')
+            .replace(regex, " ")
+            .split(" ")
             .filter(function (item) { return item; });
         var outObj = {};
         for (var i = 0; i < textArr.length; i++) {
             var checked = this.checkWord(textArr[i]);
-            var checkedList = Array.isArray(checked)
-                ? checked
-                : [checked];
+            var checkedList = Array.isArray(checked) ? checked : [checked];
             for (var j = 0; j < checkedList.length; j++) {
                 if (checkedList[j] == null) {
                     outObj[textArr[i]] = true;
@@ -123,39 +126,37 @@ var SpellChecker = (function () {
         configurable: true
     });
     SpellChecker.prototype.parseParams = function (inputOrProps, charsetOption) {
-        if (typeof inputOrProps !== 'string') {
+        if (typeof inputOrProps !== "string") {
             return {
                 input: inputOrProps.input,
-                charset: inputOrProps.charset || 'utf8',
-                async: inputOrProps.async,
+                charset: inputOrProps.charset || "utf8",
+                async: inputOrProps.async
             };
         }
         return {
             input: inputOrProps,
-            charset: charsetOption || 'utf8',
-            async: false,
+            charset: charsetOption || "utf8",
+            async: false
         };
     };
     SpellChecker.prototype.checkWord = function (wordProp, recblock) {
         var _this = this;
-        if (wordProp == null || wordProp === '' || !isNaN(Number(wordProp))) {
+        if (wordProp == null || wordProp === "" || !isNaN(Number(wordProp))) {
             return;
         }
-        var word = wordProp.replace(/^#/, '');
+        var word = wordProp.replace(/^#/, "");
         if (this.BUFFER.WORDS.has(word)) {
             return true;
         }
         if (this.BUFFER.WORDS.has(word.toLowerCase())) {
             return true;
         }
-        var esymb = '-/\'';
+        var esymb = "-/'";
         for (var i = 0; i < esymb.length; i++) {
             if (recblock || word.indexOf(esymb[i]) === -1) {
                 continue;
             }
-            var retArray = word
-                .split(esymb[i])
-                .map(function (item, i) {
+            var retArray = word.split(esymb[i]).map(function (item, i) {
                 if (i === 0) {
                     return _this.checkWord(item, true);
                 }
@@ -169,9 +170,9 @@ var SpellChecker = (function () {
     };
     SpellChecker.prototype.getWordsList = function (fileBuff, charset, words) {
         var text = iconv.decode(fileBuff, charset);
-        var list = text.split('\n');
+        var list = text.split("\n");
         var len = list.length;
-        if (list[len - 1] === '') {
+        if (list[len - 1] === "") {
             len--;
         }
         var i = 0;
@@ -179,7 +180,7 @@ var SpellChecker = (function () {
             words.add(list[i]);
             i++;
         }
-        words.delete('');
+        words.delete("");
         return {
             words: words,
             size: len
