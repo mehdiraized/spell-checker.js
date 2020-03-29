@@ -15,14 +15,14 @@ import * as XRegExp from "xregexp";
  * @interface FileResult
  */
 declare interface FileResult {
-  words: Array<string>;
+  words: Set<string>;
   size: number;
 }
 
 class SpellChecker {
   /** Object for storing list and the number of words */
   private BUFFER = {
-    WORDS: new Array(),
+    WORDS: new Set(),
     SIZE: 0
   };
 
@@ -89,7 +89,7 @@ class SpellChecker {
 
   /** Clears buffer */
   public clear(): void {
-    this.BUFFER.WORDS = [];
+    this.BUFFER.WORDS.clear();
     this.BUFFER.SIZE = 0;
   }
 
@@ -102,13 +102,12 @@ class SpellChecker {
       console.error("ERROR! Dictionaries are not loaded");
       return;
     }
-    let regex;
+    let regex = XRegExp("[^\\p{N}\\p{L}-_]", "g");
     if (halfSpace) {
-      const space_codepoints ='\u0020\u2000-\u200F\u2028-\u202F';
-      const persian_alpha_codepoints = '\u0621-\u0628\u062A-\u063A\u0641-\u0642\u0644-\u0648\u064E-\u0651\u0655\u067E\u0686\u0698\u06A9\u06AF\u06BE\u06CC';
-      regex = XRegExp("[^\\p{N}\\p{L}-_"+space_codepoints+persian_alpha_codepoints+"]", "g");
-    } else {
-      regex = XRegExp("[^\\p{N}\\p{L}-_]", "g");
+      regex = XRegExp(
+        "[^\\p{N}\\p{L}-_\u0020\u2000-\u200F\u2028-\u202F\u0621-\u0628\u062A-\u063A\u0641-\u0642\u0644-\u0648\u064E-\u0651\u0655\u067E\u0686\u0698\u06A9\u06AF\u06BE\u06CC]",
+        "g"
+      );
     }
     const textArr = text
       .replace(regex, " ")
@@ -135,7 +134,7 @@ class SpellChecker {
    * Gets a list of words from buffer
    * @return {Set}
    */
-  public get words(): Array<string> {
+  public get words(): Set<any> {
     return this.BUFFER.WORDS;
   }
 
@@ -198,12 +197,12 @@ class SpellChecker {
     const word: string = wordProp.replace(/^#/, "");
 
     // If the word exists, returns true
-    if (this.BUFFER.WORDS.includes(word)) {
+    if (this.BUFFER.WORDS.has(word)) {
       return true;
     }
 
     // Try to remove the case
-    if (this.BUFFER.WORDS.includes(word.toLowerCase())) {
+    if (this.BUFFER.WORDS.has(word.toLowerCase())) {
       return true;
     }
 
@@ -237,7 +236,7 @@ class SpellChecker {
    * @param  {Set}    words    Word list
    * @return {Object}
    */
-  private getWordsList(fileBuff: Buffer, charset: string, words: Array<string>): FileResult {
+  private getWordsList(fileBuff: Buffer, charset: string, words: Set<string>): FileResult {
     // Reading and convert file
     const text: string = iconv.decode(fileBuff, charset);
 
@@ -251,14 +250,12 @@ class SpellChecker {
     // Add to collection
     let i = 0;
     while (i < len) {
-      words.push(list[i]);
+      words.add(list[i]);
       i++;
     }
 
     // Remove empty element
-    words = words.filter(function (el) {
-      return el != null;
-    });
+    words.delete("");
 
     return {
       words,
@@ -274,7 +271,7 @@ class SpellChecker {
    * @param  {Set}    words   Word list
    * @return {Object}
    */
-  private readDictionarySync(input: string, charset: string, words: Array<string>): FileResult {
+  private readDictionarySync(input: string, charset: string, words: Set<any>): FileResult {
     if (this.dictionaries[input] != null) {
       charset = this.dictionaries[input].charset;
       input = this.dictionaries[input].src;
@@ -309,7 +306,7 @@ class SpellChecker {
    * @param  {Set}    words   Список слов
    * @return {Object}
    */
-  private async readDictionaryAsync(input: string, charset: string, words: Array<string>): Promise<FileResult> {
+  private async readDictionaryAsync(input: string, charset: string, words: Set<any>): Promise<FileResult> {
     if (this.dictionaries[input] != null) {
       charset = this.dictionaries[input].charset;
       input = this.dictionaries[input].src;
