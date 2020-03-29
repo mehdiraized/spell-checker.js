@@ -67,8 +67,9 @@ spell.load({ input: "en", async: true }).then(len => {
 
 You can help by adding other languages or expand existing dictionaries
 
-### `spell.check(string)` — spell checking of text
+### `spell.check(string, halfSpace: false)` — spell checking of text
 
+**Setting:** halfSpace: true dont check half Space in words  
 **Returns:** array of wrong words  
 **Example:**
 
