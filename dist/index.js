@@ -43,7 +43,7 @@ var XRegExp = require("xregexp");
 var SpellChecker = (function () {
     function SpellChecker() {
         this.BUFFER = {
-            WORDS: new Set(),
+            WORDS: new Array(),
             SIZE: 0
         };
         this.dictionaries = {
@@ -86,15 +86,23 @@ var SpellChecker = (function () {
         }
     };
     SpellChecker.prototype.clear = function () {
-        this.BUFFER.WORDS.clear();
+        this.BUFFER.WORDS = [];
         this.BUFFER.SIZE = 0;
     };
-    SpellChecker.prototype.check = function (text) {
+    SpellChecker.prototype.check = function (text, halfSpace) {
         if (this.BUFFER.SIZE === 0) {
             console.error("ERROR! Dictionaries are not loaded");
             return;
         }
-        var regex = XRegExp("[^\\p{N}\\p{L}-_]", "g");
+        var regex;
+        if (halfSpace) {
+            var space_codepoints = '\u0020\u2000-\u200F\u2028-\u202F';
+            var persian_alpha_codepoints = '\u0621-\u0628\u062A-\u063A\u0641-\u0642\u0644-\u0648\u064E-\u0651\u0655\u067E\u0686\u0698\u06A9\u06AF\u06BE\u06CC';
+            regex = XRegExp("[^\\p{N}\\p{L}-_" + space_codepoints + persian_alpha_codepoints + "]", "g");
+        }
+        else {
+            regex = XRegExp("[^\\p{N}\\p{L}-_]", "g");
+        }
         var textArr = text
             .replace(regex, " ")
             .split(" ")
@@ -145,10 +153,10 @@ var SpellChecker = (function () {
             return;
         }
         var word = wordProp.replace(/^#/, "");
-        if (this.BUFFER.WORDS.has(word)) {
+        if (this.BUFFER.WORDS.includes(word)) {
             return true;
         }
-        if (this.BUFFER.WORDS.has(word.toLowerCase())) {
+        if (this.BUFFER.WORDS.includes(word.toLowerCase())) {
             return true;
         }
         var esymb = "-/'";
@@ -177,10 +185,12 @@ var SpellChecker = (function () {
         }
         var i = 0;
         while (i < len) {
-            words.add(list[i]);
+            words.push(list[i]);
             i++;
         }
-        words.delete("");
+        words = words.filter(function (el) {
+            return el != null;
+        });
         return {
             words: words,
             size: len
