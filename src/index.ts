@@ -8,6 +8,7 @@
 import * as fs from "fs";
 import { resolve } from "path";
 import * as iconv from "iconv-lite";
+import * as XRegExp from "xregexp";
 
 /**
  * The result of file reading
@@ -101,9 +102,13 @@ class SpellChecker {
       console.error("ERROR! Dictionaries are not loaded");
       return;
     }
-    let regex = /[^\p{N}\p{L}-_]/gm;
+    let regex = XRegExp("[^\\p{N}\\p{L}-_]", "g");
+    
     if (halfSpace) {
-      regex = /[^\p{N}\p{L}-_u0020u2000-u200Fu2028-u202Fu0621-u0628u062A-u063Au0641-u0642u0644-u0648u064E-u0651u0655u067Eu0686u0698u06A9u06AFu06BEu06CC]/gm;
+      regex = regex = XRegExp(
+        "[^\\p{N}\\p{L}-_\u0020\u2000-\u200F\u2028-\u202F\u0621-\u0628\u062A-\u063A\u0641-\u0642\u0644-\u0648\u064E-\u0651\u0655\u067E\u0686\u0698\u06A9\u06AF\u06BE\u06CC]",
+        "g"
+      );
     }
     const textArr = text
       .replace(regex, " ")

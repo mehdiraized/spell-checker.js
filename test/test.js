@@ -143,7 +143,8 @@ describe("Persian dictionary", () => {
       expect(spell.check("خرررر")).to.have.length(1);
       expect(spell.check("بلابابا اپیسوم سسسسسد")).to.have.length(3);
       expect(spell.check("سلام")).to.have.length(0);
-      expect(spell.check("تسسست خططا")).to.have.length(2);
+      expect(spell.check("تست تست‌خوب تس‌مکنم چیز")).to.have.length(2);
+      expect(spell.check("تست تست‌خوب تس‌مکنم چیز",true)).to.have.length(2);
     });
 
   it("Load dictionary", () => {
