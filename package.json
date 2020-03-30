@@ -1,6 +1,6 @@
 {
   "name": "@mehdiraized/spell-checker-js",
-  "version": "2.1.4",
+  "version": "2.1.5",
   "description": "Simple expandable tool for spell checking",
   "main": "dist/index.js",
   "engines": {
