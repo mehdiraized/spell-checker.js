@@ -7,17 +7,15 @@
     "node": ">=8.0.0"
   },
   "dependencies": {
-    "iconv-lite": "^0.5.1",
-    "xregexp": "^4.3.0"
+    "iconv-lite": "^0.5.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.9",
+    "@types/chai": "^4.2.11",
     "@types/iconv-lite": "0.0.1",
-    "@types/mocha": "^7.0.1",
-    "@types/node": "^13.7.6",
-    "@types/xregexp": "^3.0.29",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^13.9.5",
     "chai": "^4.2.0",
-    "mocha": "^7.0.1"
+    "mocha": "^7.1.1"
   },
   "scripts": {
     "test": "mocha -t 2500 -c",
