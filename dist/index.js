@@ -39,11 +39,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var path_1 = require("path");
 var iconv = require("iconv-lite");
-var XRegExp = require("xregexp");
 var SpellChecker = (function () {
     function SpellChecker() {
         this.BUFFER = {
-            WORDS: new Array(),
+            WORDS: new Set(),
             SIZE: 0
         };
         this.dictionaries = {
@@ -86,7 +85,7 @@ var SpellChecker = (function () {
         }
     };
     SpellChecker.prototype.clear = function () {
-        this.BUFFER.WORDS = [];
+        this.BUFFER.WORDS.clear();
         this.BUFFER.SIZE = 0;
     };
     SpellChecker.prototype.check = function (text, halfSpace) {
@@ -94,14 +93,9 @@ var SpellChecker = (function () {
             console.error("ERROR! Dictionaries are not loaded");
             return;
         }
-        var regex;
+        var regex = /[^\p{N}\p{L}-_]/gm;
         if (halfSpace) {
-            var space_codepoints = '\u0020\u2000-\u200F\u2028-\u202F';
-            var persian_alpha_codepoints = '\u0621-\u0628\u062A-\u063A\u0641-\u0642\u0644-\u0648\u064E-\u0651\u0655\u067E\u0686\u0698\u06A9\u06AF\u06BE\u06CC';
-            regex = XRegExp("[^\\p{N}\\p{L}-_" + space_codepoints + persian_alpha_codepoints + "]", "g");
-        }
-        else {
-            regex = XRegExp("[^\\p{N}\\p{L}-_]", "g");
+            regex = /[^\p{N}\p{L}-_u0020u2000-u200Fu2028-u202Fu0621-u0628u062A-u063Au0641-u0642u0644-u0648u064E-u0651u0655u067Eu0686u0698u06A9u06AFu06BEu06CC]/gm;
         }
         var textArr = text
             .replace(regex, " ")
@@ -153,10 +147,10 @@ var SpellChecker = (function () {
             return;
         }
         var word = wordProp.replace(/^#/, "");
-        if (this.BUFFER.WORDS.includes(word)) {
+        if (this.BUFFER.WORDS.has(word)) {
             return true;
         }
-        if (this.BUFFER.WORDS.includes(word.toLowerCase())) {
+        if (this.BUFFER.WORDS.has(word.toLowerCase())) {
             return true;
         }
         var esymb = "-/'";
@@ -185,12 +179,10 @@ var SpellChecker = (function () {
         }
         var i = 0;
         while (i < len) {
-            words.push(list[i]);
+            words.add(list[i]);
             i++;
         }
-        words = words.filter(function (el) {
-            return el != null;
-        });
+        words.delete("");
         return {
             words: words,
             size: len
